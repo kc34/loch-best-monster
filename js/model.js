@@ -89,9 +89,9 @@ var Model = function() {
 		
 		var myRand = Math.random();
 		
-		if (myRand < 0.1) {
+		if (myRand < 0.05) {
 			this.myNPCs.push(new Blaster(start_position));
-		} else if (myRand < 0.4) {
+		} else if (myRand < 0.5) {
 			this.myNPCs.push(new Shooter(start_position));
 		} else {
 			this.myNPCs.push(new Boat(start_position));

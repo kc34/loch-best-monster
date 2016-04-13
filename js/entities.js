@@ -163,11 +163,13 @@ var Blaster = function(pos_vec) {
 	Shooter.call(this, pos_vec);
 	this.type = "BLASTER";
 	
+	this.speed = 2;
+	
 	this.patternActive = false;
 	this.timeBetweenPatterns = 4;
 	this.patternTimer = this.timeBetweenPatterns;
 	
-	this.shotsInPattern = 8;
+	this.shotsInPattern = 4;
 	this.shotsFired = 0;
 	this.timeBetweenShots = 0.125
 	this.shotTimer = 0;
@@ -191,8 +193,8 @@ Blaster.prototype.firePattern = function(delta_time) {
 }
 
 Blaster.prototype.fireShots = function(delta_time) {
-	for (i = 0; i < 4; i++) {
-		var angle = (i / 4 + this.offset / 32) * Math.PI * 2;
+	for (i = 0; i < 5; i++) {
+		var angle = (i / 5 + this.offset / 20) * Math.PI * 2;
 		var dir_vector = Vector.fromComponents(Math.cos(angle), Math.sin(angle));
 		this.firedBullets.push(new Bullet(this.getPosition(), dir_vector));
 	}
