@@ -1,10 +1,16 @@
 
 var Controller = function() {
 	
-	this.mouseLocation = Vector.null;
+	this.mouseLocation = Vector.NULL;
+	this.lastTarget = Vector.fromComponents(50, 50);
 	
 	this.mousemoveHandler = function(event) {
-		myModel.nessieTarget = myViewer.screenToGame(new Vector(event), true);
+		this.mouseLocation = new Vector(event);
+		this.lastTarget = myViewer.screenToGame(this.mouseLocation, true);
+	}
+	
+	this.getTarget = function() {
+		return this.lastTarget;
 	}
 	
 }

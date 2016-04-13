@@ -13,6 +13,7 @@ var Viewer = function() {
 		this.getGameWindow();
 		this.drawGame();
 		this.drawNessie();
+		this.drawNPCs();
 	}
 	
 	this.getGameWindow = function () {
@@ -53,6 +54,18 @@ var Viewer = function() {
 		ctx.arc( coords.x , coords.y , 3 , 0 , 2 * Math.PI );
 		ctx.fillStyle = "#00FF00";
 		ctx.fill();
+	}
+	
+	this.drawNPCs = function() {
+		for (idx in myModel.myNPCs) {
+			var coords = myModel.myNPCs[idx].position_v;
+			console.log(coords);
+			coords = this.gameToScreen(coords);
+			ctx.beginPath();
+			ctx.arc( coords.x , coords.y , 3 , 0 , 2 * Math.PI );
+			ctx.fillStyle = "#FFFFFF";
+			ctx.fill();
+		}
 	}
 	
 	this.gameToScreen = function(objectCoords) {
