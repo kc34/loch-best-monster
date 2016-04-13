@@ -11,11 +11,19 @@ var Viewer = function() {
 
 	
 	this.draw = function() {
+		
+		
+		
 		this.drawBackground();
 		this.getGameWindow();
 		this.drawGame();
 		this.drawNPCs();
 		this.drawNessie();
+		
+		ctx.fillStyle = "#FFFFFF";
+		ctx.font = "30px Courier New";
+		ctx.fillText("High Score: " + myModel.highscore.toString(), 10, 30);
+		ctx.fillText("Score: " + myModel.score.toString(), 10, 70);
 	}
 	
 	this.getGameWindow = function () {
@@ -61,12 +69,23 @@ var Viewer = function() {
 	this.drawNPCs = function() {
 		for (idx in myModel.myNPCs) {
 			var coords = myModel.myNPCs[idx].position_v;
+			var size = myModel.myNPCs[idx].size;
 			coords = this.gameToScreen(coords);
 			ctx.beginPath();
-			ctx.arc( coords.x , coords.y , this.gameLengthToScreen(1) , 0 , 2 * Math.PI );
+			ctx.arc( coords.x , coords.y , this.gameLengthToScreen(size) , 0 , 2 * Math.PI );
 			ctx.fillStyle = "#FFFFFF";
 			if (myModel.myNPCs[idx].type == "FISH") {
 				ctx.fillStyle = "#0000FF";
+			} else if (myModel.myNPCs[idx].type == "BULLET") {
+				if (myModel.myNPCs[idx].bullet_life % 0.5 > 0.25) {
+					ctx.fillStyle = "#FFFF00";
+				} else {
+					ctx.fillStyle = "#FF0000";
+				}
+			} else if (myModel.myNPCs[idx].type == "SHOOTER") {
+				ctx.fillStyle = "#000000";
+			} else if (myModel.myNPCs[idx].type == "BLASTER") {
+				ctx.fillStyle = "#FF0000";
 			}
 			ctx.fill();
 		}
