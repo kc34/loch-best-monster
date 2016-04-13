@@ -41,6 +41,7 @@ var myModel =  new Model();
 var TIME_STEP = 1.0 / 60; // Time-step. Measured in seconds.
 var accumulator = 0.0;
 var currentTime = new Date();
+var currentDraw = new Date();
 
 /**
  * 	Runs physics-model and rendering separately, but on same thread.
@@ -110,7 +111,8 @@ window.addEventListener('keydown', function(key) {
 	myController.keydownHandler(key);
 }, false);*/
 
-var mainLooper = setInterval(main, TIME_STEP);
+myModel.start();
+var mainLooper = setInterval(main, 1000 * TIME_STEP);
 
 </script>
 

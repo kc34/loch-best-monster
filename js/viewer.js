@@ -8,12 +8,14 @@ var Viewer = function() {
 	this.gameWindowTopLeft = Vector.NULL;
 	this.gameWindowSideLength = null;
 	
+
+	
 	this.draw = function() {
 		this.drawBackground();
 		this.getGameWindow();
 		this.drawGame();
-		this.drawNessie();
 		this.drawNPCs();
+		this.drawNessie();
 	}
 	
 	this.getGameWindow = function () {
@@ -51,7 +53,7 @@ var Viewer = function() {
 		var coords = myModel.getNessie();
 		coords = this.gameToScreen(coords);
 		ctx.beginPath();
-		ctx.arc( coords.x , coords.y , 3 , 0 , 2 * Math.PI );
+		ctx.arc( coords.x , coords.y , this.gameLengthToScreen(1) , 0 , 2 * Math.PI );
 		ctx.fillStyle = "#00FF00";
 		ctx.fill();
 	}
@@ -59,11 +61,13 @@ var Viewer = function() {
 	this.drawNPCs = function() {
 		for (idx in myModel.myNPCs) {
 			var coords = myModel.myNPCs[idx].position_v;
-			console.log(coords);
 			coords = this.gameToScreen(coords);
 			ctx.beginPath();
-			ctx.arc( coords.x , coords.y , 3 , 0 , 2 * Math.PI );
+			ctx.arc( coords.x , coords.y , this.gameLengthToScreen(1) , 0 , 2 * Math.PI );
 			ctx.fillStyle = "#FFFFFF";
+			if (myModel.myNPCs[idx].type == "FISH") {
+				ctx.fillStyle = "#0000FF";
+			}
 			ctx.fill();
 		}
 	}
@@ -84,5 +88,9 @@ var Viewer = function() {
 		}
 		
 		return coords;
+	}
+	
+	this.gameLengthToScreen = function(length) {
+		return length / 100 * this.gameWindowSideLength;
 	}
 }
