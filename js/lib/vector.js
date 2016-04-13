@@ -36,5 +36,11 @@ Vector.prototype.unit = function() {
 	}
 }
 
+Vector.prototype.transform = function(tMatrix) {
+	var new_x = this.x * tMatrix[0][0] + this.y * tMatrix[0][1];
+	var new_y = this.x * tMatrix[0][1] + this.y * tMatrix[1][1];
+	return Vector.fromComponents(new_x, new_y);
+}
+
 Vector.ZERO = Vector.fromComponents(0, 0);
 Vector.NULL = Vector.fromComponents(null, null);

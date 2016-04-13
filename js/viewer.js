@@ -77,7 +77,7 @@ var Viewer = function() {
 			if (myModel.myNPCs[idx].type == "FISH") {
 				ctx.fillStyle = "#0000FF";
 			} else if (myModel.myNPCs[idx].type == "BULLET") {
-				if (myModel.myNPCs[idx].bullet_life % 0.5 > 0.25) {
+				if (myModel.myNPCs[idx].bullet_life % 0.25 > 0.125) {
 					ctx.fillStyle = "#FFFF00";
 				} else {
 					ctx.fillStyle = "#FF0000";
@@ -92,7 +92,9 @@ var Viewer = function() {
 	}
 	
 	this.gameToScreen = function(objectCoords) {
-		return objectCoords.scMult(0.01 * this.gameWindowSideLength)
+		var tMatrix = [[0.01 * this.gameWindowSideLength, 0],
+					   [0, 0.01 * this.gameWindowSideLength]];
+		return objectCoords.transform(tMatrix)
 						   .add(this.gameWindowTopLeft);
 	}
 	
