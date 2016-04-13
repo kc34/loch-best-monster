@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Happy Birthday, Lilian!</title>
+</head>
+<body>
+
+<canvas id="myCanvas">
+Your browser does not support the canvas element.
+</canvas>
+
+<style>
+html, body {
+  width:  100%;
+  height: 100%;
+  margin: 0px;
+  overflow: hidden;
+}
+</style>
+
+<script src="js/model.js"></script>
+<script src="js/viewer.js"></script>
+<script src="js/controller.js"></script>
+<script src="js/lib/vector.js"></script>
+
+<script>
+
+/**
+ * 	Begin by creating our favorite singletons.
+ */
+
+var myController = new Controller();
+var myViewer = new Viewer();
+var myModel =  new Model();
+
+/**
+ * 	Other important global variables (e.g. time-keeping, environment)
+ */
+
+var TIME_STEP = 1.0 / 60; // Time-step. Measured in seconds.
+var accumulator = 0.0;
+var currentTime = new Date();
+
+/**
+ * 	Runs physics-model and rendering separately, but on same thread.
+ */
+function main() {
+	
+	newTime = new Date();
+    frameTime = (newTime - currentTime) / 1000;
+	
+    if ( frameTime > 0.1 )
+        frameTime = 0.1;
+    currentTime = newTime;
+
+    accumulator += frameTime;
+    while ( accumulator >= TIME_STEP )
+    {
+        myModel.update(TIME_STEP);
+        accumulator -= TIME_STEP;
+    }
+    
+	myViewer.draw();
+}
+
+/**
+ * Canvas creation!
+ */
+
+var canvas = document.getElementById("myCanvas");
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+canvas.onmousedown = function(){ return false; };
+
+ctx = canvas.getContext("2d");
+
+/**
+ * Canvas event registration
+ */
+
+/** Event: Mousedown followed by mouseup.
+canvas.addEventListener('click', function(event) {
+	myController["clickHandler"](event);
+}, false);*/
+
+/** Event: Left mousebutton press on the canvas.
+canvas.addEventListener('mousedown', function(event) {
+	myController["mousedownHandler"](event);
+}, false);*/
+
+/** Event: Left mousebutton release on the canvas.
+canvas.addEventListener('mouseup', function(event) {
+	myController["mouseupHandler"](event);
+}, false);*/
+
+/** Event: Any movement of the mouse over the canvas. */
+canvas.addEventListener('mousemove', function(event) {
+	myController["mousemoveHandler"](event);
+}, false);
+
+/** Event: Movement of the mousewheel.
+canvas.addEventListener('mousewheel', function(event) {
+	myController["mousewheelHandler"](event);
+}, false);*/
+
+/** Event: Any key press.
+window.addEventListener('keydown', function(key) {
+	myController.keydownHandler(key);
+}, false);*/
+
+var mainLooper = setInterval(main, TIME_STEP);
+
+</script>
+
+</body>
+</html>
+
