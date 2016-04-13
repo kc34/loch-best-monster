@@ -11,7 +11,7 @@ var Model = function() {
 	this.myNPCs = null;
 	
 	this.start = function() {
-		this.nessie = new Boat(new Vector.fromComponents(50, 50));
+		this.nessie = new Mover(new Vector.fromComponents(50, 50));
 		this.nessie.speed = 250
 		
 		this.myNPCs = [];
@@ -22,10 +22,10 @@ var Model = function() {
 	
 	this.update = function(delta_time) {
 		
-		this.nessie.update(delta_time, myController.getTarget());
+		this.nessie.act(delta_time, myController.getTarget());
 		
 		for (idx in this.myNPCs) {
-			this.myNPCs[idx].update(delta_time, this.getNessie());
+			this.myNPCs[idx].act(delta_time, this.getNessie());
 		}
 		
 		for (idx in this.myNPCs) {
@@ -37,6 +37,7 @@ var Model = function() {
 					this.spawnBoat();
 				} else {
 					this.start();
+					break;
 				}
 			}
 		}
@@ -60,13 +61,13 @@ var Model = function() {
 		var position = Math.random() * 100;
 		var start_positions = [];
 		
-		if (this.getNessie.x < 50) {
+		if (this.getNessie().x < 50) {
 			start_positions.push(new Vector.fromComponents(100, position));
 		} else {
 			start_positions.push(new Vector.fromComponents(0, position));
 		}
 		
-		if (this.getNessie.y < 50) {
+		if (this.getNessie().y < 50) {
 			start_positions.push(new Vector.fromComponents(position, 100));
 		} else {
 			start_positions.push(new Vector.fromComponents(position, 0));

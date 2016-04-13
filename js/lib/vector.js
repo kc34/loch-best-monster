@@ -28,5 +28,13 @@ Vector.prototype.norm = function() {
 	return Vector.distance(Vector.ZERO, this);
 }
 
+Vector.prototype.unit = function() {
+	if (this.norm == 0) {
+		return Vector.ZERO;
+	} else {
+		return this.scMult(1 / this.norm);
+	}
+}
+
 Vector.ZERO = Vector.fromComponents(0, 0);
 Vector.NULL = Vector.fromComponents(null, null);
