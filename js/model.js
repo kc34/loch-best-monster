@@ -15,7 +15,7 @@ var Model = function() {
 	
 	this.start = function() {
 		this.score = 0;
-		this.nessie = new Mover(new Vector.fromComponents(50, 50));
+		this.nessie = new Boat(new Vector.fromComponents(50, 50));
 		this.nessie.speed = 250
 		
 		this.myNPCs = [];
@@ -26,7 +26,7 @@ var Model = function() {
 	
 	this.update = function(delta_time) {
 		
-		this.nessie.act(delta_time, myController.getTarget());
+		this.nessie.chase(delta_time, myController.getTarget());
 		
 		for (idx in this.myNPCs) {
 			this.myNPCs[idx].act(delta_time, this.getNessie());
@@ -64,7 +64,8 @@ var Model = function() {
 	this.spawnFish = function() {
 		var xPos = Math.random() * 100;
 		var yPos = Math.random() * 100;
-		var newFish = new Fish(Vector.fromComponents(xPos, yPos));
+		var newFish = new Entity(Vector.fromComponents(xPos, yPos));
+		newFish.type = "FISH";
 		this.myNPCs.push(newFish);
 	}
 	
@@ -89,13 +90,21 @@ var Model = function() {
 		
 		var myRand = Math.random();
 		
-		if (myRand < 0.05) {
-			this.myNPCs.push(new Blaster(start_position));
-		} else if (myRand < 0.5) {
-			this.myNPCs.push(new Shooter(start_position));
-		} else {
-			this.myNPCs.push(new Boat(start_position));
+		var driftAngle = Math.random(2 * Math.PI);
+		
+		if (this.score == 20) {
+			this.myNPCs.push(new SuperBlaster(start_position, driftAngle));
+			return;
 		}
+		
+		if (myRand < 0.05) {
+			this.myNPCs.push(new Blaster(start_position, driftAngle));
+		} else if (myRand < 0.5) {
+			this.myNPCs.push(new Shooter(start_position, driftAngle));
+		} else {
+			this.myNPCs.push(new Boat(start_position, driftAngle));
+		}
+		
 	}
 	
 	this.detectedCollision = function(object1, object2) {

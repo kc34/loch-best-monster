@@ -7,6 +7,10 @@ Vector.fromComponents = function(x, y) {
 	return new Vector({x : x, y : y});
 }
 
+Vector.fromPolar = function(r, theta) {
+	return new Vector({x : r * Math.cos(theta), y : r * Math.sin(theta)});
+}
+
 Vector.prototype.add = function(vector) {
 	return Vector.fromComponents(this.x + vector.x, this.y + vector.y);
 }
@@ -20,19 +24,19 @@ Vector.prototype.scMult = function(scalar) {
 }
 
 Vector.distance = function(vectorA, vectorB) {
-	var distance = Math.pow(Math.pow(vectorA.x - vectorB.x, 2) + Math.pow(vectorA.y - vectorB.y, 2), 0.5);
-	return distance;
+	return vectorA.subtract(vectorB).norm();
 }
 
 Vector.prototype.norm = function() {
-	return Vector.distance(Vector.ZERO, this);
+	return Math.pow(Math.pow(this.x, 2) + Math.pow(this.y, 2), 0.5);
+	//return Vector.distance(Vector.ZERO, this);
 }
 
 Vector.prototype.unit = function() {
-	if (this.norm == 0) {
+	if (this.norm() == 0) {
 		return Vector.ZERO;
 	} else {
-		return this.scMult(1 / this.norm);
+		return this.scMult(1 / this.norm());
 	}
 }
 

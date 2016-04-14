@@ -8,11 +8,7 @@ var Viewer = function() {
 	this.gameWindowTopLeft = Vector.NULL;
 	this.gameWindowSideLength = null;
 	
-
-	
 	this.draw = function() {
-		
-		
 		
 		this.drawBackground();
 		this.getGameWindow();
@@ -68,7 +64,7 @@ var Viewer = function() {
 	
 	this.drawNPCs = function() {
 		for (idx in myModel.myNPCs) {
-			var coords = myModel.myNPCs[idx].position_v;
+			var coords = myModel.myNPCs[idx].getPosition();
 			var size = myModel.myNPCs[idx].size;
 			coords = this.gameToScreen(coords);
 			ctx.beginPath();
