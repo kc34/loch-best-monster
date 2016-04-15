@@ -195,7 +195,7 @@ var SuperBlaster = function(pos_vec, driftAngle) {
 	
 	this.shotsInPattern = 120;
 	this.shotsFired = 0;
-	this.timeBetweenShots = 1.0/12o;
+	this.timeBetweenShots = 1.0/120;
 	this.shotTimer = 0;
 }
 
