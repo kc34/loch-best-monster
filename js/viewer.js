@@ -20,7 +20,7 @@ var Viewer = function() {
 		ctx.font = "30px Courier New";
 		ctx.fillText("High Score: " + myModel.highscore.toString(), 10, 30);
 		ctx.fillText("Score: " + myModel.score.toString(), 10, 70);
-		ctx.fillText("Bullets: " + myModel.bullets.length.toString(), 10, 100);
+		ctx.fillText("Bullets: " + myModel.bullets.length.toString(), 10, 110);
 	}
 	
 	this.getGameWindow = function () {
