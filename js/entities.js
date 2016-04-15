@@ -149,7 +149,7 @@ var Blaster = function(pos_vec, driftAngle) {
 	this.type = "BLASTER";
 	
 	this.patternActive = false;
-	this.timeBetweenPatterns = 4;
+	this.timeBetweenPatterns = 5;
 	this.patternTimer = this.timeBetweenPatterns;
 	
 	this.shotsInPattern = 4;
@@ -193,9 +193,9 @@ var SuperBlaster = function(pos_vec, driftAngle) {
 	this.timeBetweenPatterns = 10;
 	this.patternTimer = this.timeBetweenPatterns;
 	
-	this.shotsInPattern = 180;
+	this.shotsInPattern = 120;
 	this.shotsFired = 0;
-	this.timeBetweenShots = 1.0/180;
+	this.timeBetweenShots = 1.0/12o;
 	this.shotTimer = 0;
 }
 
