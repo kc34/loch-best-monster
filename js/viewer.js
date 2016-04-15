@@ -13,8 +13,8 @@ var Viewer = function() {
 		this.drawBackground();
 		this.getGameWindow();
 		this.drawGame();
-		this.drawNPCs();
 		this.drawNessie();
+		this.drawNPCs();
 		
 		ctx.fillStyle = "#FFFFFF";
 		ctx.font = "30px Courier New";
@@ -63,35 +63,25 @@ var Viewer = function() {
 	}
 	
 	this.drawNPCs = function() {
-		for (idx in myModel.myNPCs) {
-			var coords = myModel.myNPCs[idx].getPosition();
-			var size = myModel.myNPCs[idx].hitRad;
-			coords = this.gameToScreen(coords);
-			ctx.beginPath();
-			ctx.arc( coords.x , coords.y , this.gameLengthToScreen(size) , 0 , 2 * Math.PI );
-			ctx.fillStyle = "#FFFFFF";
-			if (myModel.myNPCs[idx].type == "FISH") {
-				ctx.fillStyle = "#0000FF";
-			} else if (myModel.myNPCs[idx].type == "BULLET") {
-				if (myModel.myNPCs[idx].bullet_life % 0.25 > 0.125) {
-					ctx.fillStyle = "#FFFF00";
+		myModel.enemies.concat(myModel.bullets).forEach(function(myObject) {
+				
+			color = "#FFFFFF";
+			if (myObject.type == "BULLET") {
+				if (myObject.bullet_life % 0.25 > 0.125) {
+					color = "#FFFF00";
 				} else {
-					ctx.fillStyle = "#FF0000";
+					color = "#FF0000";
 				}
-			} else if (myModel.myNPCs[idx].type == "SHOOTER") {
-				ctx.fillStyle = "#000000";
-			} else if (myModel.myNPCs[idx].type == "BLASTER") {
-				ctx.fillStyle = "#FF0000";
+			} else if (myObject.type == "SHOOTER") {
+				color = "#000000";
+			} else if (myObject.type == "BLASTER") {
+				color = "#FF0000";
 			}
-			ctx.fill();
-		}
+			this.drawGameCircle(myObject.getPosition(), myObject.hitRadius, color);
+		}, this);
 		
-		var fish = this.gameToScreen(myModel.fish.getPosition());
-		console.log(fish);
-		ctx.beginPath();
-		ctx.arc( fish.x, fish.y, this.gameLengthToScreen(1), 0, 2 * Math.PI);
-		ctx.fillStyle = "#0000FF";
-		ctx.fill();
+		this.drawGameCircle(myModel.fish.getPosition(), 1, "#0000FF");
+
 		
 	}
 	
@@ -117,5 +107,14 @@ var Viewer = function() {
 	
 	this.gameLengthToScreen = function(length) {
 		return length / 100 * this.gameWindowSideLength;
+	}
+	
+	this.drawGameCircle = function(gameVector, gameRadius, color) {
+		var screenVector = this.gameToScreen(gameVector);
+		var screenRadius = this.gameLengthToScreen(gameRadius);
+		ctx.beginPath();
+		ctx.arc(screenVector.x, screenVector.y, screenRadius, 0, 2 * Math.PI);
+		ctx.fillStyle = color;
+		ctx.fill();
 	}
 }

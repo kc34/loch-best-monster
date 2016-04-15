@@ -14,8 +14,8 @@
 var Entity = function(pos_vec) {
 	
 	this.position = pos_vec;
-	this.hitRad = 1;
-	this.hurtRad = 1;
+	this.hitRadius = 1;
+	this.hurtRadius = 1;
 	this.type = "ENTITY";
 
 }
@@ -132,8 +132,8 @@ var Bullet = function(pos_vec, dir_vec, speed) {
 	}
 	this.dirVec = dir_vec;
 	this.velocity = Vector.fromPolar(this.speed, this.dirVec);
-	this.hitRad = 0.5;
-	this.hurtRad = 0.5;
+	this.hitRadius = 0.5;
+	this.hurtRadius = 0.5;
 	this.bullet_life = 0;
 }
 Bullet.prototype = Object.create(Boat.prototype);
@@ -188,8 +188,8 @@ Blaster.prototype.fireShots = function(delta_time, bulletSpeed) {
 
 var SuperBlaster = function(pos_vec, driftAngle) {
 	Blaster.call(this, pos_vec, driftAngle, this.speed);
-	this.hitRad = 2;
-	this.hurtRad = 2;
+	this.hitRadius = 2;
+	this.hurtRadius = 2;
 	
 	this.patternActive = false;
 	this.timeBetweenPatterns = 10;

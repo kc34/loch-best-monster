@@ -8,7 +8,8 @@ var Model = function() {
 	
 	this.nessie = null;
 	
-	this.myNPCs = null;
+	this.enemies = null;
+	this.bullets = null;
 	
 	this.score = 0;
 	this.highscore = 0;
@@ -22,10 +23,10 @@ var Model = function() {
 		this.score = 0;
 		this.nessie = new Boat(new Vector.fromComponents(50, 50));
 		this.nessie.speed = 250
-		this.nessie.hurtRad = 0.5
+		this.nessie.hurtRadius = 0.5
 		
-		this.myNPCs = [];
-		this.fish = null;
+		this.enemies = [];
+		this.bullets = [];
 		this.spawnFish();
 		
 		this.spawnBoat();
@@ -41,18 +42,18 @@ var Model = function() {
 			return;
 		}
 			
-		
 		this.nessie.chase(delta_time, myController.getTarget());
 		
-		for (idx in this.myNPCs) {
-			this.myNPCs[idx].act(delta_time, this.getNessie());
-			if (this.myNPCs[idx].type == "SHOOTER" || this.myNPCs[idx].type == "BLASTER") {
-				while (this.myNPCs[idx].firedBullets.length > 0) {
-					var bullet = this.myNPCs[idx].firedBullets.pop();
-					this.myNPCs.push(bullet);
-				}
+		this.enemies.concat(this.bullets).forEach(function(object) {
+			object.act(delta_time, this.getNessie());
+		}, this);
+		
+		this.enemies.forEach(function(object) {
+			if (object.type == "SHOOTER" || object.type == "BLASTER") {
+				this.bullets = this.bullets.concat(object.firedBullets);
+				object.firedBullets = [];
 			}
-		}
+		}, this);
 		
 		if (this.detectedHit(this.nessie, this.fish)) {
 			this.score += 1;
@@ -61,24 +62,22 @@ var Model = function() {
 			this.spawnBoat();
 		}
 		
-		for (idx in this.myNPCs) {
-			if (this.detectedHit(this.myNPCs[idx], this.nessie)) {
-				if (this.myNPCs[idx].type == "FISH") {
-					this.myNPCs.splice(idx, 1);
-					this.score += 1;
-					this.highscore = Math.max(this.highscore, this.score);
-					idx -= 1;
-					this.spawnFish();
-					this.spawnBoat();
-				} else {
-					this.state = "KILLED"
-					this.stateTimer = 1.0;
-					//this.start();
-					break;
-				}
-			}
+		var killed = this.enemies.concat(this.bullets).some(function(hazard) {
+			return (this.detectedHit(hazard, this.nessie));
+		}, this);
+		
+		if (killed) {
+			this.state = "KILLED";
+			this.stateTimer = 1.0;
 		}
 		
+		this.bullets = this.bullets.filter(function(bullet) {
+			var pos = myViewer.gameToScreen(bullet.getPosition());
+			return (pos.x >= 0 && pos.x < window.innerWidth &&
+					pos.y >= 0 && pos.y < window.innerHeight);
+		}, this);
+		
+		console.log(this.bullets.length);
 		
 	}
 	
@@ -94,46 +93,54 @@ var Model = function() {
 		this.fish = newFish;
 	}
 	
-	this.spawnBoat = function() {
+	this.getBorderSpawnPosition = function() {
 		
 		var position = Math.random() * 100;
-		var start_positions = [];
+		var start_position = null;
 		
-		if (this.getNessie().x < 50) {
-			start_positions.push(new Vector.fromComponents(100, position));
+		if (Math.random() < 0.5) {
+		
+			if (this.getNessie().x < 50) {
+				start_position = (new Vector.fromComponents(100, position));
+			} else {
+				start_position = (new Vector.fromComponents(0, position));
+			}
 		} else {
-			start_positions.push(new Vector.fromComponents(0, position));
+		
+			if (this.getNessie().y < 50) {
+				start_position = (new Vector.fromComponents(position, 100));
+			} else {
+				start_position = (new Vector.fromComponents(position, 0));
+			}
 		}
 		
-		if (this.getNessie().y < 50) {
-			start_positions.push(new Vector.fromComponents(position, 100));
-		} else {
-			start_positions.push(new Vector.fromComponents(position, 0));
-		}
+		return start_position;
+	}
+	
+	this.spawnBoat = function() {
 		
-		start_position = start_positions[Math.floor(Math.random() * 2)];
+		var start_position = this.getBorderSpawnPosition();
 		
 		var myRand = Math.random();
-		
 		var driftAngle = Math.random(2 * Math.PI);
 		
 		if (this.score == 20) {
-			this.myNPCs.push(new SuperBlaster(start_position, driftAngle));
+			this.enemies.push(new SuperBlaster(start_position, driftAngle));
 			return;
 		}
 		
 		if (myRand < 0.05) {
-			this.myNPCs.push(new Blaster(start_position, driftAngle));
+			this.enemies.push(new Blaster(start_position, driftAngle));
 		} else if (myRand < 0.5) {
-			this.myNPCs.push(new Shooter(start_position, driftAngle));
+			this.enemies.push(new Shooter(start_position, driftAngle));
 		} else {
-			this.myNPCs.push(new Boat(start_position, driftAngle));
+			this.enemies.push(new Boat(start_position, driftAngle));
 		}
 		
 	}
 	
 	this.detectedHit = function(object1, object2) {
-		var wiggleRoom = object1.hitRad + object2.hurtRad;
+		var wiggleRoom = object1.hitRadius + object2.hurtRadius;
 		return (Vector.distance(object1.getPosition(), object2.getPosition()) < wiggleRoom);
 	}
 	
