@@ -43,7 +43,7 @@ var Boat = function(pos_vec, driftAngle, speed) {
 	Entity.call(this, pos_vec);
 	
 	if (speed == null) {
-		this.speed = (5 + Math.random() * 20) / 2;
+		this.speed = (5 + Math.random() * 5) / 2;
 	} else {
 		this.speed = speed;
 	}
@@ -96,29 +96,43 @@ var Shooter = function(pos_vec, driftAngle, speed) {
 	this.patternActive = false;
 	this.timeBetweenPatterns = 1;
 	this.patternTimer = this.timeBetweenPatterns;
+	this.loadedBullets = [];
 	this.firedBullets = [];
 }
 Shooter.prototype = Object.create(Boat.prototype);
 
-Shooter.prototype.act = function(delta_time) {
+Shooter.prototype.act = function(delta_time, target) {
 	this.patternTimer-= delta_time;
 	
 	if (this.patternTimer < 0) {
 		this.patternTimer += this.timeBetweenPatterns;
 		this.patternActive = true;
+		this.loadPattern(delta_time, target);
 	}
 	
-	if (this.patternActive) {
-		this.firePattern(delta_time);
-	}
-	
-	this.drift(delta_time);
+	this.fireBullets(delta_time);
+	if (this.loadedBullets.length == 0)
+		this.drift(delta_time);
 }
 
-Shooter.prototype.firePattern = function(delta_time) {
+Shooter.prototype.loadPattern = function(delta_time) {
 	var driftAngle = Math.random() * Math.PI * 2;
-	this.firedBullets.push(new Bullet(this.getPosition(), driftAngle));
+	this.loadedBullets.push([0, new Bullet(this.getPosition(), driftAngle)]);
 	this.patternActive = false;
+}
+
+Shooter.prototype.fireBullets = function(delta_time) {
+	var idx = this.loadedBullets.length;
+	while (idx - 1 >= 0) {
+		idx -= 1;
+		var bullet = this.loadedBullets[idx];
+		if (bullet[0] <= 0) {
+			this.loadedBullets.splice(idx, 1);
+			this.firedBullets.push(bullet[1]);
+		} else {
+			bullet[0] -= delta_time;
+		}
+	}
 }
 
 var Bullet = function(pos_vec, dir_vec, speed) {
@@ -126,7 +140,7 @@ var Bullet = function(pos_vec, dir_vec, speed) {
 	this.type = "BULLET"
 	this.sight = 0;
 	if (speed == null) {
-		this.speed = 10;
+		this.speed = 5;
 	} else {
 		this.speed = speed;
 	}
@@ -158,32 +172,18 @@ var Blaster = function(pos_vec, driftAngle) {
 	this.timeBetweenShots = 0.125
 	this.shotTimer = 0;
 	
-	this.offset = 0;
 }
 Blaster.prototype = Object.create(Shooter.prototype);
 
-Blaster.prototype.firePattern = function(delta_time) {
-	this.shotTimer -= delta_time;
-	if (this.shotTimer <= 0) {
-		 this.shotTimer += this.timeBetweenShots;
-		 var bulletSpeed = 20 - 1.25 * this.shotsFired;
-		 this.fireShots(delta_time, bulletSpeed);
-		 this.shotsFired += 1;
-	 } 
-	 
-	 if (this.shotsFired >= this.shotsInPattern) {
-		 this.shotsFired = 0;
-		 this.patternActive = false;
-	 }
-}
-
-Blaster.prototype.fireShots = function(delta_time, bulletSpeed) {
-	for (i = 0; i < 5; i++) {
-		var driftAngle = (i / 5 + this.offset / 20) * Math.PI * 2;
-		this.firedBullets.push(new Bullet(this.getPosition(), driftAngle, bulletSpeed));
+Blaster.prototype.loadPattern = function(delta_time) {
+	var timeOffset = 0;
+	for (var i = 0; i < this.shotsInPattern; i++) {
+		var bulletSpeed = (20 - 1.25 * i) / 2;
+		for (var j = 0; j < 5; j++) {
+			var driftAngle = (j / 5 + i / 20) * Math.PI * 2;
+			this.loadedBullets.push([i * this.timeBetweenShots, new Bullet(this.getPosition(), driftAngle, bulletSpeed)]);
+		}
 	}
-	this.offset += 1;
-
 }
 
 var SuperBlaster = function(pos_vec, driftAngle) {
@@ -195,12 +195,53 @@ var SuperBlaster = function(pos_vec, driftAngle) {
 	this.timeBetweenPatterns = 10;
 	this.patternTimer = this.timeBetweenPatterns;
 	
-	this.shotsInPattern = 120;
+	this.shotsInPattern = 40;
 	this.shotsFired = 0;
-	this.timeBetweenShots = 1.0/120;
+	this.timeBetweenShots = 1.0/40;
 	this.shotTimer = 0;
 }
 
 SuperBlaster.prototype = Object.create(Blaster.prototype);
 
+SuperBlaster.prototype.loadPattern = function(delta_time) {
+	var timeOffset = 0;
+	for (var k = 0; k < 5; k++) {
+		for (var i = 0; i < 8; i++) {
+			var bulletSpeed = (20 - 1.25 * i) / 2;
+			for (var j = 0; j < 5; j++) {
+				var driftAngle = (j / 5 + i / 20 + k / 100) * Math.PI * 2;
+				var newBullet = new Bullet(this.getPosition(), driftAngle, bulletSpeed);
+				newBullet.type = "BULLET1";
+				this.loadedBullets.push([i * this.timeBetweenShots + k * 0.5, newBullet]);
+			}
+		}
+	}
+}
+
+var Sprayer = function(pos_vec, driftAngle) {
+	this.speed = 2;
+	Shooter.call(this, pos_vec, driftAngle, this.speed);
+	this.hitRadius = 2;
+	this.hurtRadius = 2;
+	
+	this.timeBetweenPatterns = 10;
+	this.patternTimer = this.timeBetweenPatterns;
+	this.timeBetweenShots = 1.0/120;
+	this.shotsInPattern = 150;
+}
+
+Sprayer.prototype = Object.create(Shooter.prototype);
+
+Sprayer.prototype.loadPattern = function(delta_time, target) {
+	var baseAngle = target.subtract(this.getPosition()).getAngle();
+	for (var i = 0; i < this.shotsInPattern; i++) {
+		var bulletSpeed = 5 + Math.random() * 5;
+		var loadingTime = 2 * Math.random();
+		var bulletAngle = baseAngle + (-1/3 + Math.random() * 2/3) * Math.PI;
+		var newBullet = new Bullet(this.getPosition(), bulletAngle, bulletSpeed);
+		newBullet.type = "BULLET1";
+		this.loadedBullets.push([loadingTime, newBullet]);
+	}
+			
+}
 

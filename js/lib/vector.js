@@ -45,5 +45,9 @@ Vector.prototype.transform = function(tMatrix) {
 	return Vector.fromComponents(new_x, new_y);
 }
 
+Vector.prototype.getAngle = function() {
+	return Math.atan2(this.y, this.x);
+}
+
 Vector.ZERO = Vector.fromComponents(0, 0);
 Vector.NULL = Vector.fromComponents(null, null);

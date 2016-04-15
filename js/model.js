@@ -77,8 +77,6 @@ var Model = function() {
 					pos.y >= 0 && pos.y < window.innerHeight);
 		}, this);
 		
-		console.log(this.bullets.length);
-		
 	}
 	
 	this.getNessie = function() {
@@ -123,6 +121,16 @@ var Model = function() {
 		
 		var myRand = Math.random();
 		var driftAngle = Math.random(2 * Math.PI);
+		
+		if (this.score == 20) {
+			this.enemies.push(new SuperBlaster(start_position, driftAngle));
+			return;
+		}
+		
+		if (this.score == 10) {
+			this.enemies.push(new Sprayer(start_position, driftAngle));
+			return;
+		}
 		
 		if (this.score == 20) {
 			this.enemies.push(new SuperBlaster(start_position, driftAngle));

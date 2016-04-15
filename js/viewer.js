@@ -20,6 +20,7 @@ var Viewer = function() {
 		ctx.font = "30px Courier New";
 		ctx.fillText("High Score: " + myModel.highscore.toString(), 10, 30);
 		ctx.fillText("Score: " + myModel.score.toString(), 10, 70);
+		ctx.fillText("Bullets: " + myModel.bullets.length.toString(), 10, 100);
 	}
 	
 	this.getGameWindow = function () {
@@ -54,12 +55,7 @@ var Viewer = function() {
 	}
 	
 	this.drawNessie = function() {
-		var coords = myModel.getNessie();
-		coords = this.gameToScreen(coords);
-		ctx.beginPath();
-		ctx.arc( coords.x , coords.y , this.gameLengthToScreen(1) , 0 , 2 * Math.PI );
-		ctx.fillStyle = "#00FF00";
-		ctx.fill();
+		this.drawGameCircle(myModel.getNessie(), 1, "#00FF00");
 	}
 	
 	this.drawNPCs = function() {
@@ -67,10 +63,16 @@ var Viewer = function() {
 				
 			color = "#FFFFFF";
 			if (myObject.type == "BULLET") {
-				if (myObject.bullet_life % 0.25 > 0.125) {
+				if (myObject.bullet_life % 0.1 > 0.05) {
 					color = "#FFFF00";
 				} else {
 					color = "#FF0000";
+				}
+			} else if (myObject.type == "BULLET1") {
+				if (myObject.bullet_life % 0.1 > 0.05) {
+					color = "#00FFFF";
+				} else {
+					color = "#FFFFFF";
 				}
 			} else if (myObject.type == "SHOOTER") {
 				color = "#000000";
