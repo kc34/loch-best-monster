@@ -29,7 +29,6 @@ Vector.distance = function(vectorA, vectorB) {
 
 Vector.prototype.norm = function() {
 	return Math.pow(Math.pow(this.x, 2) + Math.pow(this.y, 2), 0.5);
-	//return Vector.distance(Vector.ZERO, this);
 }
 
 Vector.prototype.unit = function() {

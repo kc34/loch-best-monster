@@ -14,7 +14,8 @@
 var Entity = function(pos_vec) {
 	
 	this.position = pos_vec;
-	this.size = 1;
+	this.hitRad = 1;
+	this.hurtRad = 1;
 	this.type = "ENTITY";
 
 }
@@ -40,7 +41,6 @@ Entity.prototype.setPosition = function(positionVector) {
  */
 var Boat = function(pos_vec, driftAngle, speed) {
 	Entity.call(this, pos_vec);
-	this.size = 1.0
 	
 	if (speed == null) {
 		this.speed = (5 + Math.random() * 20) / 2;
@@ -49,7 +49,7 @@ var Boat = function(pos_vec, driftAngle, speed) {
 	}
 	
 	this.type = "BOAT";
-	this.sight = Math.random() * 50;
+	this.sight = 25;
 	this.velocity = Vector.fromPolar(this.speed, driftAngle);
 }
 
@@ -132,7 +132,8 @@ var Bullet = function(pos_vec, dir_vec, speed) {
 	}
 	this.dirVec = dir_vec;
 	this.velocity = Vector.fromPolar(this.speed, this.dirVec);
-	this.size = 0.5;
+	this.hitRad = 0.5;
+	this.hurtRad = 0.5;
 	this.bullet_life = 0;
 }
 Bullet.prototype = Object.create(Boat.prototype);
@@ -187,7 +188,8 @@ Blaster.prototype.fireShots = function(delta_time, bulletSpeed) {
 
 var SuperBlaster = function(pos_vec, driftAngle) {
 	Blaster.call(this, pos_vec, driftAngle, this.speed);
-	this.size = 2;
+	this.hitRad = 2;
+	this.hurtRad = 2;
 	
 	this.patternActive = false;
 	this.timeBetweenPatterns = 10;

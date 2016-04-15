@@ -13,18 +13,34 @@ var Model = function() {
 	this.score = 0;
 	this.highscore = 0;
 	
+	this.state = null;
+	this.stateTimer = 0.0;
+	
 	this.start = function() {
+		this.state = "RUNNING";
+		
 		this.score = 0;
 		this.nessie = new Boat(new Vector.fromComponents(50, 50));
 		this.nessie.speed = 250
+		this.nessie.hurtRad = 0.5
 		
 		this.myNPCs = [];
+		this.fish = null;
 		this.spawnFish();
 		
 		this.spawnBoat();
 	}
 	
 	this.update = function(delta_time) {
+		
+		if (this.state == "KILLED") {
+			this.stateTimer -= delta_time;
+			if (this.stateTimer <= 0) {
+				this.start();
+			}
+			return;
+		}
+			
 		
 		this.nessie.chase(delta_time, myController.getTarget());
 		
@@ -38,8 +54,15 @@ var Model = function() {
 			}
 		}
 		
+		if (this.detectedHit(this.nessie, this.fish)) {
+			this.score += 1;
+			this.highscore = Math.max(this.highscore, this.score);
+			this.spawnFish();
+			this.spawnBoat();
+		}
+		
 		for (idx in this.myNPCs) {
-			if (this.detectedCollision(this.myNPCs[idx], this.nessie)) {
+			if (this.detectedHit(this.myNPCs[idx], this.nessie)) {
 				if (this.myNPCs[idx].type == "FISH") {
 					this.myNPCs.splice(idx, 1);
 					this.score += 1;
@@ -48,7 +71,9 @@ var Model = function() {
 					this.spawnFish();
 					this.spawnBoat();
 				} else {
-					this.start();
+					this.state = "KILLED"
+					this.stateTimer = 1.0;
+					//this.start();
 					break;
 				}
 			}
@@ -66,7 +91,7 @@ var Model = function() {
 		var yPos = Math.random() * 100;
 		var newFish = new Entity(Vector.fromComponents(xPos, yPos));
 		newFish.type = "FISH";
-		this.myNPCs.push(newFish);
+		this.fish = newFish;
 	}
 	
 	this.spawnBoat = function() {
@@ -107,8 +132,8 @@ var Model = function() {
 		
 	}
 	
-	this.detectedCollision = function(object1, object2) {
-		var wiggleRoom = object1.size + object2.size;
+	this.detectedHit = function(object1, object2) {
+		var wiggleRoom = object1.hitRad + object2.hurtRad;
 		return (Vector.distance(object1.getPosition(), object2.getPosition()) < wiggleRoom);
 	}
 	

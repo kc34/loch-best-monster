@@ -65,7 +65,7 @@ var Viewer = function() {
 	this.drawNPCs = function() {
 		for (idx in myModel.myNPCs) {
 			var coords = myModel.myNPCs[idx].getPosition();
-			var size = myModel.myNPCs[idx].size;
+			var size = myModel.myNPCs[idx].hitRad;
 			coords = this.gameToScreen(coords);
 			ctx.beginPath();
 			ctx.arc( coords.x , coords.y , this.gameLengthToScreen(size) , 0 , 2 * Math.PI );
@@ -85,6 +85,14 @@ var Viewer = function() {
 			}
 			ctx.fill();
 		}
+		
+		var fish = this.gameToScreen(myModel.fish.getPosition());
+		console.log(fish);
+		ctx.beginPath();
+		ctx.arc( fish.x, fish.y, this.gameLengthToScreen(1), 0, 2 * Math.PI);
+		ctx.fillStyle = "#0000FF";
+		ctx.fill();
+		
 	}
 	
 	this.gameToScreen = function(objectCoords) {
