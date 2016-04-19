@@ -17,6 +17,8 @@ var Model = function() {
 	this.state = null;
 	this.stateTimer = 0.0;
 	
+	this.MAX_ENEMIES = 25;
+	
 	this.start = function() {
 		this.state = "RUNNING";
 		
@@ -77,6 +79,12 @@ var Model = function() {
 					pos.y >= 0 && pos.y < window.innerHeight);
 		}, this);
 		
+		for (var i = this.enemies.length - 1; i >= 0; i--) {
+			if (this.enemies.length - i > this.MAX_ENEMIES) {
+				this.enemies.splice(i, 1);
+			}
+		}
+		
 	}
 	
 	this.getNessie = function() {
@@ -119,30 +127,26 @@ var Model = function() {
 		
 		var start_position = this.getBorderSpawnPosition();
 		
-		var myRand = Math.random();
 		var driftAngle = Math.random(2 * Math.PI);
 		
-		if (this.score == 20) {
+		if (this.score > 0 && this.score % 50 == 0) {
 			this.enemies.push(new SuperBlaster(start_position, driftAngle));
 			return;
 		}
 		
-		if (this.score == 10) {
+		if (this.score % 50 == 25) {
 			this.enemies.push(new Sprayer(start_position, driftAngle));
 			return;
 		}
 		
-		if (this.score == 20) {
-			this.enemies.push(new SuperBlaster(start_position, driftAngle));
-			return;
-		}
+		var myRand = Math.random() + Math.random() - 1 + this.score * 0.01;
 		
-		if (myRand < 0.05) {
+		if (myRand > 1) {
 			this.enemies.push(new Blaster(start_position, driftAngle));
-		} else if (myRand < 0.5) {
-			this.enemies.push(new Shooter(start_position, driftAngle));
-		} else {
+		} else if (myRand < 0) {
 			this.enemies.push(new Boat(start_position, driftAngle));
+		} else {
+			this.enemies.push(new Shooter(start_position, driftAngle));
 		}
 		
 	}

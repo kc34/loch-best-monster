@@ -63,13 +63,15 @@ var Viewer = function() {
 				
 			color = "#FFFFFF";
 			if (myObject.type == "BULLET") {
-				if (myObject.bullet_life % 0.1 > 0.05) {
+				var bulletFrame = myObject.bullet_life % 1 * 60
+				if (bulletFrame % 10 >= 5) {
 					color = "#FFFF00";
 				} else {
 					color = "#FF0000";
 				}
 			} else if (myObject.type == "BULLET1") {
-				if (myObject.bullet_life % 0.1 > 0.05) {
+				var bulletFrame = myObject.bullet_life % 1 * 60
+				if (bulletFrame % 10 >= 5) {
 					color = "#00FFFF";
 				} else {
 					color = "#FFFFFF";
