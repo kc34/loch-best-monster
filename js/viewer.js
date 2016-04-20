@@ -17,10 +17,13 @@ var Viewer = function() {
 		this.drawNPCs();
 		
 		ctx.fillStyle = "#FFFFFF";
-		ctx.font = "30px Courier New";
-		ctx.fillText("High Score: " + myModel.highscore.toString(), 10, 30);
-		ctx.fillText("Score: " + myModel.score.toString(), 10, 70);
-		ctx.fillText("Bullets: " + myModel.bullets.length.toString(), 10, 110);
+		ctx.font = "20px Courier New";
+		var bdayMessage = "In observance of Lilian's 20th."
+		ctx.fillText(bdayMessage, 10, 25);
+		ctx.fillText("High Score: " + myModel.highscore.toString(), 10, 50);
+		ctx.fillText("Score: " + myModel.score.toString(), 10, 75);
+		var bulletDisplay = "Bullets: " + myModel.bullets.length.toString();
+		ctx.fillText(bulletDisplay, window.innerWidth - ctx.measureText(bulletDisplay).width - 10, 25);
 	}
 	
 	this.getGameWindow = function () {
