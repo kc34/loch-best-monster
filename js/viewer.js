@@ -20,8 +20,9 @@ var Viewer = function() {
 		ctx.font = "20px Courier New";
 		var bdayMessage = "In observance of Lilian's 20th."
 		ctx.fillText(bdayMessage, 10, 25);
-		ctx.fillText("High Score: " + myModel.highscore.toString(), 10, 50);
-		ctx.fillText("Score: " + myModel.score.toString(), 10, 75);
+		ctx.fillText("Justin's High Score: 41", 10, 50);
+		ctx.fillText("Your High Score: " + myModel.highscore.toString(), 10, 75);
+		ctx.fillText("Score: " + myModel.score.toString(), 10, 100);
 		var bulletDisplay = "Bullets: " + myModel.bullets.length.toString();
 		ctx.fillText(bulletDisplay, window.innerWidth - ctx.measureText(bulletDisplay).width - 10, 25);
 	}
